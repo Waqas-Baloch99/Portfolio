@@ -102,7 +102,6 @@ class ProjectImage(models.Model):
 
 
 # Payment Model
-from django.utils.timezone import now
 class Payment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -126,6 +125,11 @@ class Payment(models.Model):
 
     def update_user_membership(self):
         """Update the user's premium status based on payment expiration."""
-        if self.is_expired():
+        latest_payment = Payment.objects.filter(user=self.user).order_by('-renewal_date').first()
+
+        if latest_payment and latest_payment.is_expired():
             self.user.is_premium = False
-            self.user.save()
+        else:
+            self.user.is_premium = True
+
+        self.user.save()
