@@ -3,27 +3,51 @@
 {% block title %}Verify OTP{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Verify OTP</h2>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="alert {{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    
-    <form method="post" class="form-container">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="otp">Enter OTP:</label>
-            <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter your OTP" required>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px;">
+        <div class="card-header text-white text-center" style="background-color: #db4437;">
+            <h3 class="my-3">Verify OTP</h3>
         </div>
-        <button type="submit" class="btn btn-primary">Verify OTP</button>
-    </form>
+        <div class="card-body">
+            {% if messages %}
+                <div class="mt-3">
+                    <ul class="messages list-unstyled">
+                        {% for message in messages %}
+                            <li class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="otp" class="form-label">Enter OTP:</label>
+                    <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter your OTP" required>
+                    {% if form.otp.errors %}
+                        <div class="text-danger">
+                            {% for error in form.otp.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn text-white" style="background-color: #db4437;">Verify OTP</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <style>
+    .card-header {
+        background-color: #db4437 !important;
+    }
+
     .container {
         max-width: 400px;
         margin: 50px auto;
@@ -34,14 +58,13 @@
         background-color: #f9f9f9;
     }
 
-    h2 {
+    h3 {
         text-align: center;
         margin-bottom: 20px;
-        color: #333;
+        color: #fff;
     }
 
     .messages {
-        list-style-type: none;
         padding: 0;
         margin-bottom: 20px;
     }
@@ -82,14 +105,14 @@
         padding: 10px 20px;
         font-size: 16px;
         color: #fff;
-        background-color: #007bff;
+        background-color: #db4437;
         border: none;
         border-radius: 4px;
         cursor: pointer;
     }
 
     .btn:hover {
-        background-color: #0056b3;
+        background-color: #c43832;
     }
 </style>
 {% endblock %}

@@ -3,6 +3,9 @@
 {% block title %}Premium Membership{% endblock %}
 
 {% block content %}
+{% if user.is_premium%}
+<h2>premium</h2>
+{%else%}
 <section class="premium-membership my-5">
     <div class="container">
         <div class="premium-card card shadow-lg p-4 bg-white">
@@ -36,7 +39,7 @@
         </div>
     </div>
 </section>
-
+{%endif%}
 <!-- Bootstrap CSS -->
 
 <!-- Custom CSS -->

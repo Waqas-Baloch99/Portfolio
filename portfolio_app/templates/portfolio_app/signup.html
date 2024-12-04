@@ -4,13 +4,13 @@
 
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card text-center" style="width: 400px;">
-        <div class="card-header h5 text-white bg-primary">Sign Up</div> <!-- Adjusted color -->
+    <div class="card text-center shadow-lg p-4" style="width: 400px;">
+        <div class="card-header text-white" style="background-color: #db4437;">Sign Up</div>
         <div class="card-body px-4">
             <form method="post">
                 {% csrf_token %}
                 <!-- Dynamically Rendered Form Fields -->
-                
+
                 <div class="form-outline mb-3">
                     <label for="id_email" class="form-label">Email</label>
                     <input 
@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-warning w-100">Sign Up</button>
+                <button type="submit" class="btn text-white w-100" style="background-color: #db4437;">Sign Up</button>
             </form>
 
             <!-- Display messages -->
@@ -124,7 +124,7 @@
         </div>
 
         <div class="card-footer">
-            <p>Already have an account? <a href="{% url 'login' %}" class="text-warning">Login here</a>.</p> <!-- Adjusted color -->
+            <p>Already have an account? <a href="{% url 'login' %}" class="text-danger" style="color: #db4437;">Login here</a>.</p>
         </div>
     </div>
 </div>

@@ -2,19 +2,19 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center">Portfolio</h1>
+    <h1 class="text-center mb-5">Portfolio</h1>
 
     <!-- User Profile Section -->
-    <div class="row my-4">
+    <div class="row my-4 bg-light p-4 rounded shadow-sm">
         <div class="col-md-4 text-center">
             {% if user.profile_image %}
-                <img src="{{ user.profile_image.url }}" alt="Profile Picture" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px;">
+                <img src="{{ user.profile_image.url }}" alt="Profile Picture" class="img-fluid rounded-circle shadow-lg profile-image" style="width: 150px; height: 150px;">
             {% else %}
-                <img src="https://via.placeholder.com/150" alt="Profile Picture" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px;">
+                <img src="https://via.placeholder.com/150" alt="Profile Picture" class="img-fluid rounded-circle shadow-lg profile-image" style="width: 150px; height: 150px;">
             {% endif %}
         </div>
         <div class="col-md-8">
-            <h2 class="font-weight-bold">{{ user.first_name }} {{ user.last_name }}
+            <h2 class="font-weight-bold text-gradient">{{ user.first_name }} {{ user.last_name }}
                 {% if user.is_premium %}
                     <span class="badge badge-premium">Premium</span>
                 {% endif %}
@@ -24,24 +24,22 @@
             <p><strong>Signup Year:</strong> {{ signup_year }}</p>
             <div class="social-links my-2">
                 {% if linkedin_url %}
-                    <a href="{{ linkedin_url }}" class="btn btn-outline-primary btn-sm mx-1" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                    <a href="{{ linkedin_url }}" class="btn btn-outline-primary btn-sm mx-1 animated-btn" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
                 {% endif %}
                 {% if github_url %}
-                    <a href="{{ github_url }}" class="btn btn-outline-dark btn-sm mx-1" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="{{ github_url }}" class="btn btn-outline-dark btn-sm mx-1 animated-btn" target="_blank"><i class="fab fa-github"></i> GitHub</a>
                 {% endif %}
             </div>
         </div>
     </div>
 
-   
-
     <!-- Skills Section -->
-    <div class="my-4">
-        <h3>Skills</h3>
+    <div class="my-4 fade-in">
+        <h3 class="section-title">Skills</h3>
         {% if skills %}
             <ul class="list-inline">
                 {% for skill in skills %}
-                    <li class="list-inline-item badge badge-skill my-1">{{ skill.name }}</li>
+                    <li class="list-inline-item badge badge-skill my-1 animated-item">{{ skill.name }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -50,13 +48,13 @@
     </div>
 
     <!-- Projects Section -->
-    <div class="my-4">
-        <h3>Projects</h3>
+    <div class="my-4 fade-in">
+        <h3 class="section-title">Projects</h3>
         {% if projects %}
             <div class="row">
                 {% for project in projects %}
                 <div class="col-md-4 mb-3 d-flex align-items-stretch">
-                    <div class="card shadow w-100">
+                    <div class="card shadow-lg w-100 animated-card">
                         {% if project.images.all %}
                             <img src="{{ project.images.first.image.url }}" class="card-img-top" alt="Project Image">
                         {% else %}
@@ -84,7 +82,7 @@
 <!-- Adding FontAwesome for Icons -->
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-<!-- Custom CSS for Premium Badge and Skills -->
+<!-- Custom CSS for Premium Badge, Skills, and Animations -->
 <style>
     .badge-premium {
         background-color: #d4af37;
@@ -93,25 +91,105 @@
         padding: 5px 10px;
         border-radius: 10px;
         font-size: 1em;
+        animation: bounce 2s infinite;
     }
-    .premium-section {
-        background-color: #ffeb3b;
-        color: black;
-        padding: 20px;
-        border-radius: 10px;
+
+    .profile-image {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+    .profile-image:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
     .badge-skill {
-        background-color: #6c757d;
+        background: linear-gradient(90deg, #6c757d, #495057);
         color: white;
         font-size: 0.9em;
         padding: 8px 12px;
         border-radius: 12px;
+        transition: transform 0.3s ease;
     }
-    .card {
-        display: flex;
-        flex-direction: column;
+
+    .badge-skill:hover {
+        transform: scale(1.1);
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Animations */
+    .fade-in {
+        animation: fadeIn 2s ease-in-out;
+    }
+
+    .animated-card {
+        animation: slideIn 0.6s ease-in-out;
+    }
+
+    .animated-item {
+        animation: fadeUp 1s ease-in-out;
+    }
+
+    /* Bounce animation for premium badge */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Fade in effect */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Slide-in effect for cards */
+    @keyframes slideIn {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Fade-up animation for items */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Button animation on hover */
+    .animated-btn {
+        transition: all 0.3s ease;
+    }
+
+    .animated-btn:hover {
+        transform: scale(1.05);
     }
 </style>
-
 
 {% endblock %}

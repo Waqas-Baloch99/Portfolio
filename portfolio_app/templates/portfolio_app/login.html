@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card text-center" style="width: 400px;">
-        <div class="card-header h5 text-white bg-primary">Login</div>
+    <div class="card text-center shadow-lg p-4" style="width: 400px;">
+        <div class="card-header h5 text-white" style="background-color: #db4437;">Login</div>
         <div class="card-body px-4">
             <!-- Display messages -->
             {% if messages %}
@@ -31,7 +31,7 @@
                         placeholder="Enter username" 
                         required 
                         value="{{ request.POST.username }}" 
-                  
+                    >
                     {% if form.username.errors %}
                         <div class="text-danger">
                             {% for error in form.username.errors %}
@@ -58,11 +58,11 @@
                         </div>
                     {% endif %}
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <button type="submit" class="btn text-white w-100" style="background-color: #db4437;">Login</button>
             </form>
             <div class="card-footer mt-3">
-                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>.</p>
-                <p><a href="{% url 'forget_password' %}">Forgot your password?</a></p>
+                <p>Don't have an account? <a href="{% url 'signup' %}" style="color: #db4437;">Sign up here</a>.</p>
+                <p><a href="{% url 'forget_password' %}" style="color: #db4437;">Forgot your password?</a></p>
             </div>
         </div>
     </div>
