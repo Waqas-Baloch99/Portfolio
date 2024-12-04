@@ -39,20 +39,19 @@
 
                         <!-- Dropdown Menu for Accounts -->
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="{% url 'accounts' %}" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Accounts
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'accounts' %}">My Account</a></li>
                                 {% if user.is_premium %}
                                     <li><a class="dropdown-item" href="">Check Subscription</a></li>
                                 {% elif not user.is_premium %}
                                     <li><a class="dropdown-item" href="{% url 'subscribe_to_premium' %}">Subscribe to Premium</a></li>
                                 {% endif %}
                             </ul>
-                            
                         </div>
-
+                            
                         <a href="#" class="btn btn-warning rounded-pill">Contact Me</a>
                         <a href="{% url 'logout' %}" class="btn btn-warning rounded-pill">Logout</a>
                     {% else %}
