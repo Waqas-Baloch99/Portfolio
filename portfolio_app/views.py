@@ -13,6 +13,13 @@ from .models import CustomUser, Skill,Project
 from django.shortcuts import get_object_or_404, redirect
 from .models import Project
 from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.models import User
+
+from django.utils import timezone
+import stripe
+
+import json
 
 # =============== User Signup View ===============
 def signup(request):
@@ -824,12 +831,7 @@ import stripe
 
 stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
 
-from django.utils import timezone
 
-from django.utils import timezone
-import stripe
-
-import json
 
 stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
 from django.utils import timezone
@@ -923,3 +925,9 @@ def transaction_history(request):
     # Print the filtered payments for debugging
 
     return render(request, 'transaction_history.html', {'payments': payments})
+
+
+def contact(request, username):
+    # Handle the username here, e.g., get the user object
+    user = CustomUser.objects.get(username=username)
+    return render(request, 'contact.html', {'user': user})
