@@ -1,25 +1,24 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
 from datetime import datetime, timedelta
 import random
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm, CustomUserUpdateForm,ProjectForm
-from .models import CustomUser, Skill,Project
-from django.shortcuts import get_object_or_404, redirect
-from .models import Project
-from django.contrib import messages
-from django.utils import timezone
-from django.contrib.auth.models import User
-
-from django.utils import timezone
 import stripe
-
+import uuid
+from .forms import CustomUserCreationForm, CustomUserUpdateForm, ProjectForm, PaymentForm
+from .models import CustomUser, Skill, Project, Payment, ProjectImage
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 import json
+# Set your Stripe secret key
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # =============== User Signup View ===============
 def signup(request):
@@ -52,7 +51,6 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'portfolio_app/login.html', {'form': form})
 
-
 # =============== Forget Password View ===============
 def forget_password(request):
     if request.method == 'POST':
@@ -79,7 +77,6 @@ def forget_password(request):
             messages.error(request, f"An error occurred: {e}")
             print(e)
     return render(request, 'portfolio_app/forget_password.html')
-
 
 # =============== Verify OTP View ===============
 def verify_otp(request):
@@ -136,14 +133,7 @@ def reset_password(request):
             messages.error(request, "Error resetting password. Please try again.")
     return render(request, 'portfolio_app/reset_password.html')
 
-
 # =============== Accounts View ===============
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .forms import CustomUserUpdateForm
-from .models import Skill
-
 @login_required
 def accounts(request):
     if request.method == 'POST':
@@ -183,28 +173,11 @@ def accounts(request):
         form = CustomUserUpdateForm(instance=request.user)
 
     return render(request, 'accounts.html', {'form': form})
-
-
-
 # =============== Logout View ===============
 def user_logout(request):
     logout(request)
     messages.success(request, 'You have logged out successfully.')
     return redirect('login')
-
-
-# =============== Portfolio View ===============
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .models import Project, ProjectImage
-from .forms import ProjectForm
-from django.contrib.auth import login
-from django.conf import settings
-from django.core.mail import send_mail
-import random
-from datetime import datetime, timedelta
-
 # Portfolio View
 @login_required
 def portfolio(request):
@@ -227,22 +200,6 @@ def portfolio(request):
         'signup_year': signup_year,
     }
     return render(request, 'portfolio.html', context)
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Project
-from .forms import ProjectForm
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Project, ProjectImage
-from .forms import ProjectForm
-
-from django.core.exceptions import ValidationError
-
-from django.core.exceptions import ValidationError
-
 @login_required
 def projects(request):
     projects = Project.objects.filter(user=request.user)
@@ -270,9 +227,6 @@ def projects(request):
         project_form = ProjectForm()
 
     return render(request, 'projects.html', {'projects': projects, 'form': project_form})
-
-
-
 # Edit Project View
 @login_required
 def edit_project(request, id):
@@ -285,8 +239,6 @@ def edit_project(request, id):
     else:
         form = ProjectForm(instance=project)
     return render(request, 'edit_project.html', {'form': form})
-
-
 # Delete Project View
 @login_required
 def delete_project(request, id):
@@ -310,34 +262,6 @@ def show_project(request, id):
 
     # Render the project details page
     return render(request, 'show_project.html', context)
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Payment
-from .forms import PaymentForm
-import uuid
-
-import uuid
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .forms import PaymentForm
-from .models import Payment
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from datetime import datetime, timedelta
-import random
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm, CustomUserUpdateForm,ProjectForm
-from .models import CustomUser, Skill,Project
-from django.shortcuts import get_object_or_404, redirect
-from .models import Project
-from django.contrib import messages
-
 # =============== User Signup View ===============
 def signup(request):
     if request.method == 'POST':
@@ -352,15 +276,7 @@ def signup(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'portfolio_app/signup.html', {'form': form})
-
-
 # =============== User Login View ===============
-# portfolio_app/views.py
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login
-from django.shortcuts import render, redirect
-from django.contrib import messages
-
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -464,11 +380,6 @@ def reset_password(request):
 
 # =============== Accounts View ===============
 
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .forms import CustomUserUpdateForm
-from .models import Skill
-
 @login_required
 def accounts(request):
     if request.method == 'POST':
@@ -509,19 +420,11 @@ def accounts(request):
 
     return render(request, 'accounts.html', {'form': form})
 
-
-
 # =============== Logout View ===============
 def user_logout(request):
     logout(request)
     messages.success(request, 'You have logged out successfully.')
     return redirect('login')
-
-
-# =============== Portfolio View ===============
-from django.shortcuts import get_object_or_404
-from .models import CustomUser
-
 def portfolio(request, username):
     # Fetch the user based on the username parameter
     user = get_object_or_404(CustomUser, username=username)
@@ -542,33 +445,6 @@ def portfolio(request, username):
         'signup_year': signup_year,
     }
     return render(request, 'portfolio.html', context)
-
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Project
-from .forms import ProjectForm
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Project, ProjectImage
-from .forms import ProjectForm
-
-from django.core.exceptions import ValidationError
-
-from django.core.exceptions import ValidationError
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Project, ProjectImage
-from .forms import ProjectForm
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from .models import Project, ProjectImage
-from .forms import ProjectForm
 
 @login_required
 def projects(request):
@@ -606,13 +482,6 @@ def projects(request):
         'form': project_form,
         'show_upgrade_popup': show_upgrade_popup,
     })
-
-
-
-
-
-
-
 # Edit Project View
 @login_required
 def edit_project(request, id):
@@ -650,35 +519,6 @@ def show_project(request, id):
 
     # Render the project details page
     return render(request, 'show_project.html', context)
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Payment
-from .forms import PaymentForm
-import uuid
-import stripe
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.conf import settings
-from django.http import JsonResponse
-from .forms import PaymentForm
-from .models import Payment
-import json
-
-# Set your Stripe secret key
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
-# Payment view to display the form and process payments
-import stripe
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.http import JsonResponse
-from .forms import PaymentForm
-from .models import Payment
-import json
-
-# Set your Stripe secret key
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
 # Payment view to display the form and process payments
 def payment_view(request):
     if request.method == 'POST':
@@ -763,14 +603,6 @@ def process_payment(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-import stripe
-from django.http import JsonResponse
-from .models import Payment
-import json
-
-# Make sure the Stripe secret key is set
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
 def confirm_payment(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -807,41 +639,7 @@ def confirm_payment(request):
             return JsonResponse({'error': f"An unexpected error occurred: {str(e)}"}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-import stripe
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.conf import settings
-from .models import CustomUser, Payment
 
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
-import stripe
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import CustomUser, Payment
-
-# Set your Stripe secret key
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
-import json
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib import messages
-import stripe
-
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-
-
-
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
-from django.utils import timezone
-import stripe
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.contrib import messages
-import json
-
-stripe.api_key = "sk_test_51QQnd0BopiD2AhCIPcxiWRnFa24f4ZzfCEM7L3kp52J8jq0OPIroZxx2b2SXg7XKq8Kjjed4CUvdD9gIcVLGglFE00CKRpK0Qp"
 
 @login_required
 def subscribe_to_premium(request):
