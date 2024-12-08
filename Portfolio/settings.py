@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-@j&)aivph@f6o6xvc4*$oi6a9)8s%5$!2v=@h-zyy#n=d(b0!x
 
 # Media files settings
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Debug settings
 DEBUG = True

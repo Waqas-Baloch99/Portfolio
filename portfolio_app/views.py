@@ -426,6 +426,7 @@ def portfolio(request, username):
     github_url = profile_user.github_url
     experience = profile_user.experience
     signup_year = profile_user.signup_year
+    profile_image=profile_user.profile_image
 
     context = {
         'profile_user': profile_user,  # Use a different key
@@ -435,6 +436,7 @@ def portfolio(request, username):
         'github_url': github_url,
         'experience': experience,
         'signup_year': signup_year,
+        'profile_image':profile_image,
     }
     return render(request, 'portfolio.html', context)
 
