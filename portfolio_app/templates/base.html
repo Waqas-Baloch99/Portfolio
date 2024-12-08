@@ -12,28 +12,22 @@
 
     {% load static %}
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 </head>
 
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div class="container">
-            <!-- Navbar Brand (Logo) Centered -->
             <a class="navbar-brand mx-auto" href="{% if user.is_authenticated %}{% url 'portfolio' user.username %}{% else %}{% url 'login' %}{% endif %}">
                 <img src="{% static 'logo.png' %}" alt="Logo" width="40">
             </a>
-
-            <!-- Toggler Button (for mobile view) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Collapsible Content -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
-                        <!-- Links visible only to authenticated users -->
                         <li class="nav-item"><a class="nav-link" href="{% url 'portfolio' user.username %}">Portfolio</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
                         <li class="nav-item dropdown">
@@ -43,7 +37,7 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{% url 'accounts' %}">My Account</a></li>
                                 {% if user.is_premium %}
-                                    <li><a class="dropdown-item" href="">Check Subscription</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'check_subscription' %}">Check Subscription</a></li>
                                 {% else %}
                                     <li><a class="dropdown-item" href="{% url 'subscribe_to_premium' %}">Subscribe to Premium</a></li>
                                 {% endif %}
@@ -51,7 +45,6 @@
                         </li>
                     {% endif %}
                 </ul>
-
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
@@ -59,7 +52,9 @@
                         </li>
                         <li class="nav-item"><a href="{% url 'logout' %}" class="btn btn-danger rounded-pill">Logout</a></li>
                     {% else %}
-                        <!-- Show Contact Me for specific links -->
+                        {% if profile_user.username %}
+                        <a href="{% url 'contact' username=profile_user.username %}" class="me-1 btn btn-danger rounded-pill">Contact</a>
+                         {% endif %}
                         <li class="nav-item"><a href="{% url 'login' %}" class="me-1 btn btn-danger rounded-pill">Login</a></li>
                         <li class="nav-item"><a href="{% url 'signup' %}" class="btn btn-danger rounded-pill">Join now</a></li>
                     {% endif %}
@@ -67,17 +62,12 @@
             </div>
         </div>
     </nav>
-
-    <!-- Page Content -->
     <div class="container mt-4">
         {% block content %}
         {% endblock %}
     </div>
-
-    <!-- Bootstrap Bundle (includes Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
 </body>
-
 </html>

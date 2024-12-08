@@ -719,5 +719,5 @@ def transaction_history(request):
 
 def contact(request, username):
     # Handle the username here, e.g., get the user object
-    user = get_object_or_404(CustomUser, username=username)
-    return render(request, 'contact.html', {'user': user})
+    profile_user = get_object_or_404(CustomUser, username=username)
+    return render(request, 'contact.html', {'profile_user': profile_user})
