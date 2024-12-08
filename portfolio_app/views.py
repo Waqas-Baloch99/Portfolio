@@ -708,15 +708,8 @@ def subscribe_to_premium(request):
 @login_required
 def transaction_history(request):
     # Print the currently logged-in user for debugging
-
-    # Filter payments by the logged-in user
     payments = Payment.objects.filter(user=request.user).order_by('-created_at')
-
-    # Print the filtered payments for debugging
-
     return render(request, 'transaction_history.html', {'payments': payments})
-
-
 def contact(request, username):
     # Handle the username here, e.g., get the user object
     profile_user = get_object_or_404(CustomUser, username=username)
