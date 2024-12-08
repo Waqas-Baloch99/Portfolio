@@ -44,7 +44,7 @@
                                 <li><a class="dropdown-item" href="{% url 'accounts' %}">My Account</a></li>
                                 {% if user.is_premium %}
                                     <li><a class="dropdown-item" href="">Check Subscription</a></li>
-                                {% elif not user.is_premium %}
+                                {% else %}
                                     <li><a class="dropdown-item" href="{% url 'subscribe_to_premium' %}">Subscribe to Premium</a></li>
                                 {% endif %}
                             </ul>
@@ -54,15 +54,14 @@
 
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{% url 'contact' user.username %}" class="btn btn-danger rounded-pill me-2 mb-2 mb-lg-0">Contact Me</a>
-                    </li>
-                    <li class="nav-item"><a href="{% url 'logout' %}" class="btn btn-danger rounded-pill">Logout</a></li>
+                        <li class="nav-item">
+                            <a href="{% url 'contact' user.username %}" class="btn btn-danger rounded-pill me-2 mb-2 mb-lg-0">Contact Me</a>
+                        </li>
+                        <li class="nav-item"><a href="{% url 'logout' %}" class="btn btn-danger rounded-pill">Logout</a></li>
                     {% else %}
-                        <!-- Login button visible only to unauthenticated users -->
+                        <!-- Show Contact Me for specific links -->
                         <li class="nav-item"><a href="{% url 'login' %}" class="me-1 btn btn-danger rounded-pill">Login</a></li>
                         <li class="nav-item"><a href="{% url 'signup' %}" class="btn btn-danger rounded-pill">Join now</a></li>
-
                     {% endif %}
                 </ul>
             </div>

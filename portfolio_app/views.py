@@ -19,7 +19,6 @@ import json
 # Set your Stripe secret key
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-
 # =============== User Signup View ===============
 def signup(request):
     if request.method == 'POST':
@@ -34,7 +33,6 @@ def signup(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'portfolio_app/signup.html', {'form': form})
-
 
 # =============== User Login View ===============
 def user_login(request):
@@ -96,7 +94,6 @@ def verify_otp(request):
             messages.error(request, "Invalid OTP. Please try again.")
     return render(request, 'portfolio_app/verify_otp.html')
 
-
 # =============== Reset Password View ===============
 def reset_password(request):
     if request.method == 'POST':
@@ -142,7 +139,6 @@ def accounts(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-
             # Handle existing skills: update or remove
             for skill in user.skills.all():
                 skill_id = skill.id
@@ -293,7 +289,6 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'portfolio_app/login.html', {'form': form})
 
-
 # =============== Forget Password View ===============
 def forget_password(request):
     if request.method == 'POST':
@@ -321,7 +316,6 @@ def forget_password(request):
             print(e)
     return render(request, 'portfolio_app/forget_password.html')
 
-
 # =============== Verify OTP View ===============
 def verify_otp(request):
     if request.method == 'POST':
@@ -339,7 +333,6 @@ def verify_otp(request):
         else:
             messages.error(request, "Invalid OTP. Please try again.")
     return render(request, 'portfolio_app/verify_otp.html')
-
 
 # =============== Reset Password View ===============
 def reset_password(request):
@@ -369,7 +362,6 @@ def reset_password(request):
             request.session.pop('otp', None)
             request.session.pop('email', None)
             request.session.pop('otp_expiry', None)
-
             update_session_auth_hash(request, user)
             messages.success(request, "Password reset successfully! You can now log in.")
             return redirect('login')
@@ -377,9 +369,7 @@ def reset_password(request):
             messages.error(request, "Error resetting password. Please try again.")
     return render(request, 'portfolio_app/reset_password.html')
 
-
 # =============== Accounts View ===============
-
 @login_required
 def accounts(request):
     if request.method == 'POST':
@@ -425,18 +415,20 @@ def user_logout(request):
     logout(request)
     messages.success(request, 'You have logged out successfully.')
     return redirect('login')
+from django.contrib.auth.decorators import login_required
+
 def portfolio(request, username):
-    # Fetch the user based on the username parameter
-    user = get_object_or_404(CustomUser, username=username)
-    skills = user.skills.all()
-    projects = user.projects.all()
-    linkedin_url = user.linkedin_url
-    github_url = user.github_url
-    experience = user.experience
-    signup_year = user.signup_year
+    # Fetch the profile user based on the username parameter
+    profile_user = get_object_or_404(CustomUser, username=username)
+    skills = profile_user.skills.all()
+    projects = profile_user.projects.all()
+    linkedin_url = profile_user.linkedin_url
+    github_url = profile_user.github_url
+    experience = profile_user.experience
+    signup_year = profile_user.signup_year
 
     context = {
-        'user': user,
+        'profile_user': profile_user,  # Use a different key
         'skills': skills,
         'projects': projects,
         'linkedin_url': linkedin_url,
@@ -445,6 +437,7 @@ def portfolio(request, username):
         'signup_year': signup_year,
     }
     return render(request, 'portfolio.html', context)
+
 
 @login_required
 def projects(request):
@@ -494,7 +487,6 @@ def edit_project(request, id):
     else:
         form = ProjectForm(instance=project)
     return render(request, 'edit_project.html', {'form': form})
-
 
 # Delete Project View
 @login_required
@@ -727,5 +719,5 @@ def transaction_history(request):
 
 def contact(request, username):
     # Handle the username here, e.g., get the user object
-    user = CustomUser.objects.get(username=username)
+    user = get_object_or_404(CustomUser, username=username)
     return render(request, 'contact.html', {'user': user})
