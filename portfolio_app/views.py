@@ -418,7 +418,6 @@ def user_logout(request):
 from django.contrib.auth.decorators import login_required
 
 def portfolio(request, username):
-    # Fetch the profile user based on the username parameter
     profile_user = get_object_or_404(CustomUser, username=username)
     skills = profile_user.skills.all()
     projects = profile_user.projects.all()
@@ -429,7 +428,7 @@ def portfolio(request, username):
     profile_image=profile_user.profile_image
 
     context = {
-        'profile_user': profile_user,  # Use a different key
+        'profile_user': profile_user,  
         'skills': skills,
         'projects': projects,
         'linkedin_url': linkedin_url,
