@@ -15,6 +15,7 @@ from .models import CustomUser, Skill, Project, Payment, ProjectImage
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
 import json
+from django.views import View
 
 # Set your Stripe secret key
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -492,3 +493,9 @@ def portfolio_view(request):
         'projects': Project.objects.filter(user=request.user)
     }
     return render(request, 'portfolio.html', context)
+
+class ContactView(View):
+    def get(self, request, username):
+        profile_user = get_object_or_404(CustomUser, username=username)
+        context = {'profile_user': profile_user}
+        return render(request, 'contact.html', context)
