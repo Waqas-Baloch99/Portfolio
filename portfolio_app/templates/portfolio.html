@@ -68,6 +68,9 @@
                             <h5 class="card-title">{{ project.title }}</h5>
                             <p class="card-text">{{ project.description }}</p>
                             <div class="mt-auto">
+                                <button class="btn btn-info btn-sm mr-2" onclick="previewProject({{ project.id }}, '{{ project.title }}', '{{ project.description }}', '{% if project.images.first %}{{ project.images.first.image.url }}{% endif %}')">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
                                 {% if project.files %}
                                     <a href="{{ project.files.url }}" class="btn btn-outline-primary btn-sm" target="_blank">Download File</a>
                                 {% endif %}
@@ -81,6 +84,24 @@
             <p>No projects available.</p>
         {% endif %}
     </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="previewModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="previewImage" src="" alt="Project Preview" class="img-fluid mb-3" style="width: 100%;">
+                    <p id="previewDescription"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Adding FontAwesome for Icons -->
@@ -91,6 +112,30 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
     AOS.init();
+</script>
+
+<script>
+function previewProject(id, title, description, imageUrl) {
+    document.getElementById('previewModalLabel').textContent = title;
+    document.getElementById('previewDescription').textContent = description;
+    
+    const previewImage = document.getElementById('previewImage');
+    if (imageUrl) {
+        previewImage.src = imageUrl;
+        previewImage.style.display = 'block';
+    } else {
+        previewImage.style.display = 'none';
+    }
+    
+    $('#previewModal').modal('show');
+}
+
+// Enhance modal with keyboard navigation
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        $('#previewModal').modal('hide');
+    }
+});
 </script>
 
 <!-- Custom CSS -->
@@ -152,6 +197,29 @@
 
     .animated-btn:hover {
         transform: scale(1.05);
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close {
+        font-size: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .close:hover {
+        transform: rotate(90deg);
+    }
+
+    #previewImage {
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    #previewImage:hover {
+        transform: scale(1.02);
     }
 </style>
 {% endblock %}

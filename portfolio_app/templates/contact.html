@@ -12,26 +12,34 @@
 
     <div class="row">
         <!-- Contact Info Section -->
-        <div class="col-md-6">
+        <div class="col-md-6 text-center mb-4">
             <h3>Email</h3>
             <p>
-                <a href="mailto:{{ profile_user.email }}" class="btn btn-primary">
+                <a href="mailto:{{ profile_user.email }}" class="btn btn-primary btn-lg">
                     {{ profile_user.email }}
                 </a>
             </p>
         </div>
 
         <!-- Social Media Section -->
-        <div class="col-md-6 text-center">
+        <div class="col-md-6 text-center mb-4">
+            <h3>LinkedIn</h3>
             {% if profile_user.linkedin_url %}
-                <a href="{{ profile_user.linkedin_url }}" class="btn btn-outline-primary btn-sm mx-1 animated-btn" target="_blank">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                </a>
+                <p>
+                    <a href="{{ profile_user.linkedin_url }}" class="btn btn-outline-primary btn-lg mx-1 animated-btn" target="_blank">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </p>
+                <p>{{ profile_user.linkedin_url }}</p>
             {% endif %}
+            <h3>GitHub</h3>
             {% if profile_user.github_url %}
-                <a href="{{ profile_user.github_url }}" class="btn btn-outline-dark btn-sm mx-1 animated-btn" target="_blank">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
+                <p>
+                    <a href="{{ profile_user.github_url }}" class="btn btn-outline-dark btn-lg mx-1 animated-btn" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </p>
+                <p>{{ profile_user.github_url }}</p>
             {% endif %}
         </div>
     </div>
