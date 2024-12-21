@@ -13,9 +13,9 @@ import uuid
 from .forms import CustomUserCreationForm, CustomUserUpdateForm, ProjectForm, PaymentForm
 from .models import CustomUser, Skill, Project, Payment, ProjectImage
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 import json
+
 # Set your Stripe secret key
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -42,246 +42,6 @@ def user_login(request):
             user = form.get_user()  # Get the user directly from the form
             login(request, user)  # Log the user in
             messages.success(request, "You have logged in successfully!")
-            return redirect('accounts')  # Redirect to the accounts page after login
-        else:
-            messages.error(request, "Invalid credentials. Please try again.")
-    else:
-        form = AuthenticationForm()
-    return render(request, 'portfolio_app/login.html', {'form': form})
-
-# =============== Forget Password View ===============
-def forget_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = CustomUser.objects.get(email=email)
-            otp = random.randint(100000, 999999)  # Generate 6-digit OTP
-            request.session['otp'] = otp
-            request.session['email'] = email
-            request.session['otp_expiry'] = (datetime.now() + timedelta(minutes=10)).isoformat()  # Set expiry
-
-            send_mail(
-                'Your Password Reset OTP',
-                f'Your OTP for password reset is {otp}. It is valid for 10 minutes.',
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
-            messages.success(request, f"An OTP has been sent to {email}.")
-            return redirect('verify_otp')
-        except CustomUser.DoesNotExist:
-            messages.error(request, "No user found with this email address.")
-        except Exception as e:
-            messages.error(request, f"An error occurred: {e}")
-            print(e)
-    return render(request, 'portfolio_app/forget_password.html')
-
-# =============== Verify OTP View ===============
-def verify_otp(request):
-    if request.method == 'POST':
-        entered_otp = request.POST.get('otp')
-        session_otp = request.session.get('otp')
-        otp_expiry = request.session.get('otp_expiry')
-
-        if not otp_expiry or datetime.fromisoformat(otp_expiry) < datetime.now():
-            messages.error(request, "OTP has expired. Please request a new one.")
-            return redirect('forget_password')
-
-        if str(session_otp) == entered_otp:
-            messages.success(request, "OTP verified successfully!")
-            return redirect('reset_password')
-        else:
-            messages.error(request, "Invalid OTP. Please try again.")
-    return render(request, 'portfolio_app/verify_otp.html')
-
-# =============== Reset Password View ===============
-def reset_password(request):
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match. Please try again.")
-            return redirect('reset_password')
-
-        email = request.session.get('email')
-        if not email:
-            messages.error(request, "Session expired. Please start over.")
-            return redirect('forget_password')
-
-        try:
-            user = CustomUser.objects.get(email=email)
-            if user.check_password(password):
-                messages.error(request, "You cannot use your current password as the new password.")
-                return redirect('reset_password')
-
-            user.set_password(password)
-            user.save()
-
-            # Clear session data
-            request.session.pop('otp', None)
-            request.session.pop('email', None)
-            request.session.pop('otp_expiry', None)
-
-            update_session_auth_hash(request, user)
-            messages.success(request, "Password reset successfully! You can now log in.")
-            return redirect('login')
-        except CustomUser.DoesNotExist:
-            messages.error(request, "Error resetting password. Please try again.")
-    return render(request, 'portfolio_app/reset_password.html')
-
-# =============== Accounts View ===============
-@login_required
-def accounts(request):
-    if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, request.FILES, instance=request.user)
-        
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
-            # Handle existing skills: update or remove
-            for skill in user.skills.all():
-                skill_id = skill.id
-                skill_value = request.POST.get(f'skill_{skill_id}')
-                remove_skill = request.POST.get(f'remove_skill_{skill_id}')
-
-                if remove_skill:  # Ensure `remove_skill` is properly set
-                    user.skills.remove(skill)  # Remove the skill from the user's skills
-                else:
-                    if skill_value and skill_value != skill.name:  # If skill name has changed
-                        skill.name = skill_value
-                        skill.save()
-
-            # Handle new skill addition
-            new_skill_name = form.cleaned_data.get('new_skill')
-            if new_skill_name:
-                new_skill_name = new_skill_name.strip()  # Ensure no leading/trailing spaces
-                # Check for duplicate skills before adding
-                new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-                if new_skill not in user.skills.all():
-                    user.skills.add(new_skill)
-
-            messages.success(request, "Profile updated successfully!")
-            return redirect('accounts')  # Redirect to the same page after success
-        else:
-            messages.error(request, "Error updating profile. Please correct the errors.")
-    else:
-        form = CustomUserUpdateForm(instance=request.user)
-
-    return render(request, 'accounts.html', {'form': form})
-# =============== Logout View ===============
-def user_logout(request):
-    logout(request)
-    messages.success(request, 'You have logged out successfully.')
-    return redirect('login')
-# Portfolio View
-@login_required
-def portfolio(request):
-    # Fetch logged-in user and related data
-    user = request.user
-    skills = user.skills.all()
-    projects = user.projects.all()
-    linkedin_url = user.linkedin_url
-    github_url = user.github_url
-    experience = user.experience
-    signup_year = user.signup_year
-
-    context = {
-        'user': user,
-        'skills': skills,
-        'projects': projects,
-        'linkedin_url': linkedin_url,
-        'github_url': github_url,
-        'experience': experience,
-        'signup_year': signup_year,
-    }
-    return render(request, 'portfolio.html', context)
-@login_required
-def projects(request):
-    projects = Project.objects.filter(user=request.user)
-
-    if request.method == 'POST':
-        project_form = ProjectForm(request.POST, request.FILES)
-        if project_form.is_valid():
-            try:
-                project = project_form.save(commit=False)
-                project.user = request.user
-                project.save()
-
-                # Handle multiple images
-                images = request.FILES.getlist('images')
-                for img in images:
-                    ProjectImage.objects.create(project=project, image=img)
-
-                messages.success(request, "Project added successfully.")
-                return redirect('projects')
-            except ValidationError as e:
-                messages.error(request, e.message)
-        else:
-            messages.error(request, "Failed to add project. Please check the form.")
-    else:
-        project_form = ProjectForm()
-
-    return render(request, 'projects.html', {'projects': projects, 'form': project_form})
-# Edit Project View
-@login_required
-def edit_project(request, id):
-    project = get_object_or_404(Project, id=id)
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES, instance=project)
-        if form.is_valid():
-            form.save()
-            return redirect('projects')  # Redirect to projects list after saving
-    else:
-        form = ProjectForm(instance=project)
-    return render(request, 'edit_project.html', {'form': form})
-# Delete Project View
-@login_required
-def delete_project(request, id):
-    project = get_object_or_404(Project, id=id)
-    if project.user == request.user:  # Only the project owner can delete it
-        project.delete()
-        messages.success(request, "Project deleted successfully.")
-    else:
-        messages.error(request, "You don't have permission to delete this project.")
-    return redirect('projects')
-
-def show_project(request, id):
-    # Fetch the project by its ID
-    project = get_object_or_404(Project, id=id)
-
-    # Add the project and its associated images to the context
-    context = {
-        'project': project,
-        'images': project.images.all(),  # Get all associated images for the project
-    }
-
-    # Render the project details page
-    return render(request, 'show_project.html', context)
-# =============== User Signup View ===============
-def signup(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()  # Save the user to the database
-            login(request, user)  # Automatically log the user in
-            messages.success(request, "Account created successfully!")
-            return redirect('accounts')  # Redirect to the accounts page after signup
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'portfolio_app/signup.html', {'form': form})
-# =============== User Login View ===============
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()  # Get the user directly from the form
-            login(request, user)  # Log the user in
-            messages.success(request, "You have logged in successfully!")
-            
-            # Ensure user.username is available
             return redirect('portfolio', username=user.username)  # Redirect to the portfolio page after login
         else:
             messages.error(request, "Invalid credentials. Please try again.")
@@ -415,8 +175,9 @@ def user_logout(request):
     logout(request)
     messages.success(request, 'You have logged out successfully.')
     return redirect('login')
-from django.contrib.auth.decorators import login_required
 
+# =============== Portfolio View ===============
+@login_required
 def portfolio(request, username):
     # Fetch the profile user based on the username parameter
     profile_user = get_object_or_404(CustomUser, username=username)
@@ -426,7 +187,7 @@ def portfolio(request, username):
     github_url = profile_user.github_url
     experience = profile_user.experience
     signup_year = profile_user.signup_year
-    profile_image=profile_user.profile_image
+    profile_image = profile_user.profile_image
 
     context = {
         'profile_user': profile_user,  # Use a different key
@@ -436,11 +197,11 @@ def portfolio(request, username):
         'github_url': github_url,
         'experience': experience,
         'signup_year': signup_year,
-        'profile_image':profile_image,
+        'profile_image': profile_image,
     }
     return render(request, 'portfolio.html', context)
 
-
+# =============== Projects View ===============
 @login_required
 def projects(request):
     projects = Project.objects.filter(user=request.user)
@@ -477,7 +238,8 @@ def projects(request):
         'form': project_form,
         'show_upgrade_popup': show_upgrade_popup,
     })
-# Edit Project View
+
+# =============== Edit Project View ===============
 @login_required
 def edit_project(request, id):
     project = get_object_or_404(Project, id=id)
@@ -490,7 +252,7 @@ def edit_project(request, id):
         form = ProjectForm(instance=project)
     return render(request, 'edit_project.html', {'form': form})
 
-# Delete Project View
+# =============== Delete Project View ===============
 @login_required
 def delete_project(request, id):
     project = get_object_or_404(Project, id=id)
@@ -501,6 +263,7 @@ def delete_project(request, id):
         messages.error(request, "You don't have permission to delete this project.")
     return redirect('projects')
 
+# =============== Show Project View ===============
 def show_project(request, id):
     # Fetch the project by its ID
     project = get_object_or_404(Project, id=id)
@@ -513,7 +276,8 @@ def show_project(request, id):
 
     # Render the project details page
     return render(request, 'show_project.html', context)
-# Payment view to display the form and process payments
+
+# =============== Payment View ===============
 def payment_view(request):
     if request.method == 'POST':
         form = PaymentForm(request.POST)
@@ -555,6 +319,7 @@ def payment_view(request):
 
     return render(request, 'payment.html', {'form': form})
 
+# =============== Process Payment View ===============
 def process_payment(request):
     if request.method == 'POST':
         try:
@@ -597,6 +362,7 @@ def process_payment(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+# =============== Confirm Payment View ===============
 def confirm_payment(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -634,7 +400,7 @@ def confirm_payment(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
+# =============== Subscribe to Premium View ===============
 @login_required
 def subscribe_to_premium(request):
     if request.method == 'POST':
@@ -707,12 +473,13 @@ def subscribe_to_premium(request):
 
     return render(request, 'premium_subscription.html')
 
+# =============== Transaction History View ===============
 @login_required
 def transaction_history(request):
-    # Print the currently logged-in user for debugging
     payments = Payment.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'transaction_history.html', {'payments': payments})
+
+# =============== Contact View ===============
 def contact(request, username):
-    # Handle the username here, e.g., get the user object
     profile_user = get_object_or_404(CustomUser, username=username)
     return render(request, 'contact.html', {'profile_user': profile_user})
