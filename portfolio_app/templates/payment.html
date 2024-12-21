@@ -1,55 +1,102 @@
 {% extends 'base.html' %}
 
-{% block title %}Payment{% endblock %}
+{% block title %}Make a Payment{% endblock %}
 
 {% block content %}
-<h2>Make a Payment</h2>
+<div class="container my-5">
+    <div class="card shadow-lg p-4 bg-white mx-auto" style="max-width: 500px;">
+        <h2 class="card-title text-center text-danger fw-bold">Make a Payment</h2>
+        <p class="text-center text-muted">Secure your premium membership now!</p>
 
-<form action="{% url 'payment' %}" method="POST" id="payment-form">
-    {% csrf_token %}
-    {{ form.as_p }}
+        <!-- Payment Form -->
+        <form action="{% url 'payment' %}" method="POST" id="payment-form" class="mt-4">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-    <div id="card-element">
-        <!-- A Stripe Element will be inserted here. -->
+            <div id="card-element" class="form-control mb-3">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+
+            <div id="card-errors" class="alert alert-danger d-none" role="alert"></div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submit" class="btn btn-danger w-100 rounded-pill">Pay Now</button>
+        </form>
     </div>
-    
-    <div id="card-errors" role="alert"></div>
-    <button type="submit" id="submit">Pay</button>
-</form>
+</div>
 
-stripe.createPaymentMethod({
-    type: 'card',
-    card: card
-}).then(function(result) {
-    if (result.error) {
-        document.getElementById('card-errors').textContent = result.error.message;
-    } else {
-        var paymentMethodId = result.paymentMethod.id;
-        var paymentId = "{{ payment_id }}";  // Ensure payment ID is passed correctly here
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('pk_test_51QQnd0BopiD2AhCIOYSy0ULv1UL04slC0c7Agflxa8tgGFG2j6XeEqvxviH9zdi43E43vaBZhO0cJLV9O3cc6hEr00K5pK3Xg3');
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    card.mount('#card-element');
 
-        // Check if payment_id is present
-        console.log('Payment ID:', paymentId);
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-        fetch("{% url 'confirm_payment' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify({
-                payment_method_id: paymentMethodId,
-                payment_id: paymentId  // Send payment ID to backend
-            })
-        })
-        .then(response => response.json())
-        .then(function(paymentIntent) {
-            if (paymentIntent.paymentIntent) {
-                alert("Payment successful!");
-            } else if (paymentIntent.error) {
-                alert("Payment failed: " + paymentIntent.error);
+        stripe.createPaymentMethod({
+            type: 'card',
+            card: card
+        }).then(function(result) {
+            if (result.error) {
+                // Show card errors
+                var cardErrors = document.getElementById('card-errors');
+                cardErrors.textContent = result.error.message;
+                cardErrors.classList.remove('d-none');
+            } else {
+                var paymentMethodId = result.paymentMethod.id;
+                var paymentId = "{{ payment_id }}";  // Ensure payment ID is passed correctly here
+
+                fetch("{% url 'confirm_payment' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                    body: JSON.stringify({
+                        payment_method_id: paymentMethodId,
+                        payment_id: paymentId
+                    })
+                })
+                .then(response => response.json())
+                .then(function(paymentIntent) {
+                    if (paymentIntent.paymentIntent) {
+                        alert("Payment successful!");
+                        location.reload(); // Reload page after successful payment
+                    } else if (paymentIntent.error) {
+                        alert("Payment failed: " + paymentIntent.error);
+                    }
+                });
             }
         });
-    }
-});
+    });
+</script>
 
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .btn-danger {
+        background-color: #db4437;
+        border-color: #db4437;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43832;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    #card-errors {
+        font-size: 0.9rem;
+    }
+</style>
 {% endblock %}

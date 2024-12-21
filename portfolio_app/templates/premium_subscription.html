@@ -1,16 +1,19 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Premium Membership{% endblock %}
 
 {% block content %}
-{% if user.is_premium%}
-<h2>premium</h2>
-{%else%}
+{% if user.is_premium %}
+<section class="text-center my-5">
+    <h2 class="text-success">You are already a Premium Member!</h2>
+    <p>Thank you for supporting us. Enjoy your exclusive benefits.</p>
+</section>
+{% else %}
 <section class="premium-membership my-5">
     <div class="container">
-        <div class="premium-card card shadow-lg p-4 bg-white">
-            <h2 class="card-title text-center text-danger">Subscribe to Premium Membership</h2>
-            <p class="text-center">Get unlimited projects, exclusive features, and more.</p>
+        <div class="card shadow-lg p-4 bg-white text-center mx-auto" style="max-width: 500px;">
+            <h2 class="card-title text-danger fw-bold">Subscribe to Premium Membership</h2>
+            <p class="text-muted">Unlock unlimited projects, exclusive features, and much more for just $2/month.</p>
 
             <!-- Display messages -->
             <div id="alert-messages" class="alert-messages mb-4"></div>
@@ -19,7 +22,7 @@
                 {% csrf_token %}
 
                 <!-- Payment Method Selection -->
-                <div class="mb-3">
+                <div class="mb-3 text-start">
                     <label for="payment-method" class="form-label">Select Payment Method</label>
                     <select id="payment-method" name="payment-method" class="form-select">
                         <option value="card">Credit/Debit Card</option>
@@ -27,36 +30,54 @@
                     </select>
                 </div>
 
-                <!-- Card Element will be rendered here -->
+                <!-- Card Element -->
                 <div id="card-element" class="form-control mb-3"></div>
 
-                <!-- Display errors related to the card input -->
-                <div id="card-errors" class="alert alert-danger" role="alert" style="display: none;"></div>
+                <!-- Card Errors -->
+                <div id="card-errors" class="alert alert-danger d-none" role="alert"></div>
 
-                <!-- Submit button -->
-                <button type="submit" class="btn btn-danger btn-block">Subscribe Now - $2/month</button>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-danger btn-lg w-100 rounded-pill">Subscribe Now - $2/month</button>
             </form>
         </div>
     </div>
 </section>
-{%endif%}
-<!-- Bootstrap CSS -->
+{% endif %}
 
-<!-- Custom CSS -->
 <style>
     body {
-        background-color: #f4f4f4;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f8f9fa;
         color: #333;
     }
-    .premium-card {
-        max-width: 450px;
-        margin: auto;
-        border: 1px solid #ccc;
-        border-radius: 12px;
+
+    .card {
+        border-radius: 15px;
     }
+
+    .btn-danger {
+        background-color: #db4437;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43832;
+    }
+
+    .form-select {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+
     .form-control {
-        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .alert-messages .alert {
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
     }
 </style>
 
@@ -73,7 +94,6 @@
 
         var selectedPaymentMethod = document.getElementById('payment-method').value;
 
-        // Create PaymentMethod with the card details
         stripe.createPaymentMethod({
             type: 'card',
             card: card
@@ -81,12 +101,10 @@
             if (result.error) {
                 var cardErrors = document.getElementById('card-errors');
                 cardErrors.textContent = result.error.message;
-                cardErrors.style.display = 'block';
+                cardErrors.classList.remove('d-none');
             } else {
                 var paymentMethodId = result.paymentMethod.id;
-                console.log("Payment Method ID:", paymentMethodId);  // Debugging line
 
-                // Send the payment method ID to the backend to create the subscription
                 fetch("{% url 'subscribe_to_premium' %}", {
                     method: 'POST',
                     headers: {
@@ -102,8 +120,6 @@
                     return response.json();
                 })
                 .then(function(data) {
-                    console.log("Backend Response:", data);  // Debugging line
-
                     if (data.status === 'success') {
                         displayMessage('Subscription successful!', 'success');
                     } else {
@@ -116,7 +132,7 @@
 
     function displayMessage(message, type) {
         var alertMessages = document.getElementById('alert-messages');
-        alertMessages.innerHTML = ''; // Clear previous messages
+        alertMessages.innerHTML = '';
 
         var alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-' + type + ' alert-dismissible fade show';
@@ -124,13 +140,12 @@
         alertDiv.innerHTML = message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
         alertMessages.appendChild(alertDiv);
 
-        // Set a timer to hide the message after 10 seconds
         setTimeout(function() {
             alertDiv.classList.remove('show');
             alertDiv.classList.add('fade');
             setTimeout(function() {
                 alertDiv.remove();
-            }, 150); // Transition duration for Bootstrap fade
+            }, 150);
         }, 10000);
     }
 </script>

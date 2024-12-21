@@ -49,7 +49,7 @@ class CustomUserUpdateForm(forms.ModelForm):
     )
     experience = forms.CharField(
         required=False,
-        label="Work Experience",
+        label="Years of Experience",
         widget=forms.TextInput(attrs={'class': 'form-control'})  # TextInput since it's short
     )
 

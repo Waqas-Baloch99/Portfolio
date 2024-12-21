@@ -1,39 +1,120 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1 class="display-4">Contact {{ profile_user.first_name }} {{ profile_user.last_name }}</h1>
-            <p class="lead">{{ profile_user.introduction }}</p>
-            <hr class="my-4">
-        </div>
+<!-- Hero Section -->
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #db4437, #ff6f61); color: white;">
+    <div class="container text-center">
+        <h1 class="fw-bold display-4">Contact {{ profile_user.first_name }} {{ profile_user.last_name }}</h1>
+        <p class="lead">{{ profile_user.introduction|default:"Feel free to reach out for collaboration, inquiries, or just a friendly chat!" }}</p>
     </div>
+</div>
 
-    <div class="row">
-        <!-- Contact Info Section -->
+<!-- Contact Info Section -->
+<div class="container mt-5">
+    <div class="row g-4">
+        <!-- Email Section -->
         <div class="col-md-6">
-            <h3>Email</h3>
-            <p>
-                <a href="mailto:{{ profile_user.email }}" class="btn btn-primary">
-                    {{ profile_user.email }}
-                </a>
-            </p>
+            <div class="card shadow-lg border-0 p-4 text-center">
+                <h3 class="text-danger fw-bold">Email</h3>
+                <p class="mt-3">
+                    <a href="mailto:{{ profile_user.email }}" class="btn btn-danger btn-lg rounded-pill">
+                        {{ profile_user.email }}
+                    </a>
+                </p>
+            </div>
         </div>
 
         <!-- Social Media Section -->
-        <div class="col-md-6 text-center">
-            {% if profile_user.linkedin_url %}
-                <a href="{{ profile_user.linkedin_url }}" class="btn btn-outline-primary btn-sm mx-1 animated-btn" target="_blank">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                </a>
-            {% endif %}
-            {% if profile_user.github_url %}
-                <a href="{{ profile_user.github_url }}" class="btn btn-outline-dark btn-sm mx-1 animated-btn" target="_blank">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            {% endif %}
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 p-4 text-center">
+                <h3 class="text-danger fw-bold">Connect on Social Media</h3>
+                <div class="social-links mt-4">
+                    {% if profile_user.linkedin_url %}
+                        <a href="{{ profile_user.linkedin_url }}" class="btn btn-outline-danger btn-lg mx-2 rounded-pill" target="_blank">
+                            LinkedIn
+                        </a>
+                    {% endif %}
+                    {% if profile_user.github_url %}
+                        <a href="{{ profile_user.github_url }}" class="btn btn-outline-danger btn-lg mx-2 rounded-pill" target="_blank">
+                            GitHub
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Hero Section */
+    .container-fluid {
+        padding: 4rem 0;
+    }
+
+    .container-fluid h1 {
+        font-size: 2.8rem;
+        font-weight: bold;
+    }
+
+    .container-fluid p {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+
+    /* Cards */
+    .card {
+        border-radius: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Buttons */
+    .btn-danger {
+        background-color: #db4437;
+        border-color: #db4437;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43832;
+        border-color: #c43832;
+    }
+
+    .btn-outline-danger {
+        color: #db4437;
+        border-color: #db4437;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #db4437;
+        color: white;
+    }
+
+    .social-links .btn {
+        padding: 0.8rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .social-links .btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* General Layout */
+    h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+</style>
 {% endblock %}

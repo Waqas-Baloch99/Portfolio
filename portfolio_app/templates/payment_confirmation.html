@@ -3,8 +3,49 @@
 {% block title %}Payment Confirmation{% endblock %}
 
 {% block content %}
-    <h2>Payment Confirmation</h2>
-    <p>Payment is in progress...</p>
-    <p>Client Secret: {{ client_secret }}</p>
-    <p>Payment ID: {{ payment_id }}</p>
+<div class="container my-5">
+    <div class="card shadow-lg p-4 bg-white mx-auto" style="max-width: 600px;">
+        <h2 class="card-title text-center text-success fw-bold">Payment Confirmation</h2>
+        <p class="text-center text-muted">Your payment is being processed. Please do not close this page.</p>
+
+        <div class="mt-4">
+            <div class="alert alert-info">
+                <strong>Payment ID:</strong> {{ payment_id }}
+            </div>
+            <div class="alert alert-info">
+                <strong>Client Secret:</strong> {{ client_secret }}
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Processing...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Example of how you could use the client_secret if needed
+    console.log("Client Secret:", "{{ client_secret }}");
+    console.log("Payment ID:", "{{ payment_id }}");
+</script>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .alert-info {
+        background-color: #f1f8ff;
+        color: #004085;
+        border-color: #bee5eb;
+        border-radius: 8px;
+    }
+</style>
 {% endblock %}

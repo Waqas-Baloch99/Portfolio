@@ -1,0 +1,275 @@
+/* General Styles */
+body {
+    font-family: 'Aileron', sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+}
+
+.h-80 {
+    height: 78vh; /* Occupy 80% of the viewport height */
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+}
+
+.navbar-brand {
+    display: inline-block;
+    width: 200px;
+    height: 100px;
+    background: url("../images/splash_logo.png") no-repeat center;
+    background-size: contain;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+.navbar-nav .nav-link {
+    color: #000000;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #db4437;
+}
+
+/* Buttons */
+.btn-primary, .btn-danger {
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: #ffffff;
+    background-color: #000000;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover, .btn-danger:hover {
+    background-color: #db4437;
+}
+
+/* Footer */
+footer {
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* Profile Picture */
+.profile-picture {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border: 5px solid #ffffff;
+    background: linear-gradient(135deg, #ff5722, #ffc107);
+    padding: 5px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.profile-picture:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Skills Section */
+.skill-badge {
+    background-color: #f0f0f0;
+    color: #333333;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 25px;
+    text-transform: uppercase;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.skill-badge:hover {
+    background-color: #ff5722;
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Projects Section */
+.project-card {
+    border: none;
+    background-color: #f8f9fa; /* Switched to gray */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    text-align: center;
+    padding: 20px;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.project-img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+.project-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #000000;
+}
+
+.project-description {
+    font-size: 1rem;
+    color: #666666;
+}
+
+/* Form Inputs */
+input.form-control {
+    border: none;
+    border-bottom: 2px solid #000000;
+    border-radius: 0;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    background-color: transparent;
+    box-shadow: none;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input.form-control:focus {
+    outline: none;
+    border-bottom: 2px solid #db4437;
+    box-shadow: none;
+}
+
+input::placeholder {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Links */
+a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #db4437;
+    text-decoration: underline;
+}
+
+/* Section Backgrounds */
+header,
+#skills,
+#experience,
+#projects,
+#contact {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+#skills {
+    background-color: #f8f9fa; /* Switched to gray */
+}
+
+#experience {
+    background-color: #ffffff; /* Switched to white */
+}
+
+#projects {
+    background-color: #f8f9fa; /* Switched to gray */
+}
+
+#contact {
+    background-color: #ffffff; /* Switched to white */
+}
+
+/* Custom button styles */
+.custom-btn {
+    background-color: #db4437; /* Splash red */
+    color: white;
+    border: none;
+    border-radius: 50px; /* Rounded button */
+    padding: 10px 20px; /* Larger padding */
+    font-size: 16px; /* Adjusted font size */
+    font-weight: bold; /* Bold text */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Hover effect for buttons */
+.custom-btn:hover {
+    background-color: #c5332b; /* Slightly darker red */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* More shadow on hover */
+}
+
+/* Focus effect */
+.custom-btn:focus {
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(219, 68, 55, 0.8); /* Red glow */
+}
+
+
+    /* Projects Section */
+    .project-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .project-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .project-image-container {
+        height: 200px; /* Uniform height for all project images */
+        overflow: hidden;
+    }
+
+    .project-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .project-image-container img:hover {
+        transform: scale(1.1);
+    }
+
+    /* Buttons */
+    .btn-rounded {
+        border-radius: 30px;
+    }
+
+    /* Titles */
+    .card-title {
+        color: #2c3e50;
+        text-transform: capitalize;
+    }
+
+    /* Subtle Hover Effect for Text */
+    .card-title:hover {
+        text-decoration: underline;
+        color: #db4437;
+    }
+
+    /* Section Spacing */
+    .container {
+        padding-top: 20px;
+    }

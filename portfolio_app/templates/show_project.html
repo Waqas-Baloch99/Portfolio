@@ -1,39 +1,87 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-center mb-4">{{ project.title }}</h1>
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #db4437, #ff6f61); color: white;">
+    <div class="container text-center">
+        <h1 class="fw-bold display-4">{{ project.title }}</h1>
+        <p class="lead">Explore the details of this project.</p>
+    </div>
+</div>
 
+<div class="container mt-5">
     <!-- Project Images -->
-    <div class="row mb-4">
-        {% for image in images %}
-        <div class="col-md-4 mb-4">
-            <img src="{{ image.image.url }}" class="img-fluid rounded" alt="Project Image">
+    <div class="mb-4">
+        <h3 class="text-danger fw-bold">Project Images</h3>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for image in images %}
+            <div class="col">
+                <img src="{{ image.image.url }}" class="img-fluid rounded shadow-sm" alt="Project Image" style="height: 200px; object-fit: cover;">
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No images available for this project.</p>
+                <img src="https://via.placeholder.com/300" class="img-fluid rounded shadow-sm" alt="No image available" style="max-height: 300px;">
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="col-md-12 mb-4">
-            <img src="https://via.placeholder.com/150" class="img-fluid rounded" alt="No image available">
-        </div>
-        {% endfor %}
     </div>
 
     <!-- Project Description -->
-    <div class="mb-4">
-        <h3>Description</h3>
-        <p>{{ project.description }}</p>
+    <div class="mb-5">
+        <h3 class="text-danger fw-bold">Description</h3>
+        <p class="text-muted">{{ project.description }}</p>
     </div>
 
-    <!-- Project Files (if any) -->
-    <div class="mb-4">
+    <!-- Project Files -->
+    <div class="mb-5">
+        <h3 class="text-danger fw-bold">Project Files</h3>
         {% if project.files %}
-        <h3>Project Files</h3>
-        <a href="{{ project.files.url }}" class="btn btn-primary" target="_blank">Download Project File</a>
+        <a href="{{ project.files.url }}" class="btn btn-danger btn-rounded" target="_blank">Download Project File</a>
         {% else %}
-        <p>No project files available.</p>
+        <p class="text-muted">No project files available.</p>
         {% endif %}
     </div>
 
     <!-- Back to Projects Button -->
-    <a href="{% url 'projects' %}" class="btn btn-secondary">Back to Projects</a>
+    <div class="text-center mb-5">
+        <a href="{% url 'projects' %}" class="btn btn-secondary btn-lg rounded-pill">Back to Projects</a>
+    </div>
 </div>
+
+<style>
+    .btn-rounded {
+        border-radius: 25px;
+        font-size: 1rem;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
+
+    .btn-danger {
+        background-color: #db4437;
+        border-color: #db4437;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43832;
+        border-color: #c43832;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #5a6268;
+    }
+
+    .img-fluid {
+        border-radius: 10px;
+    }
+
+    h3 {
+        font-weight: bold;
+    }
+</style>
 {% endblock %}

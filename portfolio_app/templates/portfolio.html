@@ -1,157 +1,171 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-center mb-5 section-title">Portfolio</h1>
-
-    <!-- User Profile Section -->
-    <div class="row my-4 bg-light p-4 rounded shadow-sm" data-aos="fade-up">
-        <div class="col-md-4 text-center">
-            {% if profile_image %}
-                <img src="{{ profile_image.url }}" alt="Profile Picture" class="img-fluid rounded-circle shadow-lg profile-image">
-            {% else %}
-                <img src="https://via.placeholder.com/150" alt="Profile Picture" class="img-fluid rounded-circle shadow-lg profile-image">
-            {% endif %}
-        </div>
-        <div class="col-md-8">
-            <h2 class="font-weight-bold text-gradient">{{ user.first_name }} {{ user.last_name }}
-                {% if user.is_premium %}
-                    <span class="badge badge-premium">Premium</span>
-                {% endif %}
-            </h2>
-            <p class="text-muted">{{ user.introduction }}</p>
-            <p><strong>Experience:</strong> {{ experience }} years</p>
-            <p><strong>Joined Since:</strong> {{ signup_year }}</p>
-            <div class="social-links my-2">
-                {% if linkedin_url %}
-                    <a href="{{ linkedin_url }}" class="btn btn-outline-primary btn-sm mx-1 animated-btn" target="_blank" aria-label="LinkedIn Profile">
-                        <i class="fab fa-linkedin"></i> LinkedIn
-                    </a>
-                {% endif %}
-                {% if github_url %}
-                    <a href="{{ github_url }}" class="btn btn-outline-dark btn-sm mx-1 animated-btn" target="_blank" aria-label="GitHub Profile">
-                        <i class="fab fa-github"></i> GitHub
-                    </a>
+<!-- Hero Section -->
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #db4437, #ff6f61); color: white;">
+    <div class="container text-center">
+        <div class="row align-items-center">
+            <!-- Profile Picture -->
+            <div class="col-md-4 text-center mb-3">
+                {% if profile_image %}
+                    <img src="{{ profile_image.url }}" alt="Profile Picture" class="rounded-circle shadow" style="width: 180px; height: 180px; object-fit: cover; border: 5px solid white;">
+                {% else %}
+                    <img src="https://via.placeholder.com/180" alt="Profile Picture" class="rounded-circle shadow" style="width: 180px; height: 180px; object-fit: cover; border: 5px solid white;">
                 {% endif %}
             </div>
-        </div>
-    </div>
 
-    <!-- Skills Section -->
-    <div class="my-4 fade-in">
-        <h3 class="section-title">Skills</h3>
-        {% if skills %}
-            <ul class="list-inline">
-                {% for skill in skills %}
-                    <li class="list-inline-item badge badge-skill my-1 animated-item">{{ skill.name }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No skills listed.</p>
-        {% endif %}
-    </div>
-
-    <!-- Projects Section -->
-    <div class="my-4 fade-in">
-        <h3 class="section-title">Projects</h3>
-        {% if projects %}
-            <div class="row">
-                {% for project in projects %}
-                <div class="col-md-4 mb-3 d-flex align-items-stretch" data-aos="fade-up">
-                    <div class="card shadow-lg w-100 animated-card">
-                        {% if project.images.all %}
-                            <img src="{{ project.images.first.image.url }}" class="card-img-top" alt="Project Image">
-                        {% else %}
-                            <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">
-                        {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ project.title }}</h5>
-                            <p class="card-text">{{ project.description }}</p>
-                            <div class="mt-auto">
-                                {% if project.files %}
-                                    <a href="{{ project.files.url }}" class="btn btn-outline-primary btn-sm" target="_blank">Download File</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+            <!-- User Info -->
+            <div class="col-md-8 text-start">
+                <h1 class="fw-bold display-4">{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="fs-5 mb-3">{{ user.introduction|default:"A passionate developer creating impactful solutions." }}</p>
+                <p><strong>Experience:</strong> {{ experience|default:"N/A" }} years</p>
+                <p><strong>Joined:</strong> {{ signup_year }}</p>
+                <div class="social-links mt-4">
+                    {% if linkedin_url %}
+                        <a href="{{ linkedin_url }}" class="btn btn-outline-light btn-lg mx-2" target="_blank">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                    {% endif %}
+                    {% if github_url %}
+                        <a href="{{ github_url }}" class="btn btn-outline-light btn-lg mx-2" target="_blank">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    {% endif %}
                 </div>
-                {% endfor %}
             </div>
-        {% else %}
-            <p>No projects available.</p>
-        {% endif %}
+        </div>
     </div>
 </div>
 
-<!-- Adding FontAwesome for Icons -->
-<script src="https://cors-anywhere.herokuapp.com/https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Skills Section -->
+<div class="container mt-5">
+    <h2 class="text-center mb-2">Skills</h2>
+    {% if skills %}
+        <div class="d-flex flex-wrap justify-content-center py-4">
+            {% for skill in skills %}
+                <span class="badge skill-badge px-4 py-3 mx-2 my-2 shadow">
+                    {{ skill.name }}
+                </span>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">No skills listed.</p>
+    {% endif %}
+</div>
 
-<!-- AOS Library for Animations -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-    AOS.init();
-</script>
+<!-- Projects Section -->
+<div class="container mt-3 mb-5">
+    <h2 class="text-center mb-4">Projects</h2>
+    {% if projects %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for project in projects %}
+            <div class="col">
+                <div class="card project-card shadow-lg border-0 h-100">
+                    <!-- Project Image -->
+                    {% if project.images.all %}
+                        <div class="project-image-container">
+                            <img src="{{ project.images.first.image.url }}" class="card-img-top rounded-top" alt="Project Image">
+                        </div>
+                    {% else %}
+                        <div class="project-image-container">
+                            <img src="https://via.placeholder.com/300" class="card-img-top rounded-top" alt="No Image Available">
+                        </div>
+                    {% endif %}
 
-<!-- Custom CSS -->
+                    <!-- Project Content -->
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                        <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
+                        <div class="mt-auto">
+                            {% if project.files %}
+                                <a href="{{ project.files.url }}" class="btn btn-danger btn-sm btn-rounded" target="_blank">View Project</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">No projects available.</p>
+    {% endif %}
+</div>
+
+<!-- FontAwesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 <style>
-    .badge-premium {
-        background-color: #d4af37;
-        color: white;
+    /* Hero Section Styling */
+    .container-fluid {
+        padding: 5rem 0;
+    }
+
+    h1 {
+        font-size: 3rem;
         font-weight: bold;
-        padding: 5px 10px;
-        border-radius: 10px;
-        font-size: 1em;
-        animation: bounce 2s infinite;
     }
 
-    .profile-image {
-        width: 150px;
-        height: 150px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .profile-image:hover {
-        transform: scale(1.1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .badge-skill {
-        background: linear-gradient(90deg, #6c757d, #495057);
-        color: white;
-        font-size: 0.9em;
-        padding: 8px 12px;
-        border-radius: 12px;
-        transition: transform 0.3s ease;
-    }
-
-    .badge-skill:hover {
-        transform: scale(1.1);
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-        color: #333;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* Animations */
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    /* Buttons */
-    .animated-btn {
+    .social-links .btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 50px;
         transition: all 0.3s ease;
     }
 
-    .animated-btn:hover {
+    .social-links .btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* Skills Styling */
+    .badge {
+        animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+        from {
+            box-shadow: 0 0 10px rgba(224, 224, 224, 0.7);
+        }
+        to {
+            box-shadow: 0 0 20px rgba(224, 224, 224, 1);
+        }
+    }
+
+    /* Project Cards */
+    .card:hover {
         transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+
+    /* Skills Badge */
+    .skill-badge {
+        background: #e74c3c; /* Slightly darker orange-red for badges */
+        color: white; /* White text for contrast */
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 50px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .skill-badge:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhance hover shadow */
+    }
+
+    /* Buttons */
+    .btn-danger {
+        background-color: #db4437;
+        border-color: #db4437;
+        font-weight: bold;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43832;
+    }
+
+    /* Maintain Section Cohesion */
+    .container.my-5 {
+        padding: 2rem;
     }
 </style>
 {% endblock %}
