@@ -5,7 +5,7 @@ For **technical queries** about this portfolio project:
 - Message via [LinkedIn](https://www.linkedin.com/in/waqas-baloch)  
 
 For **general Python/Django help**, visit our community:  
-[![Skool Python Community](https://img.shields.io/badge/Skool-Python%20Community-green?style=flat)](https://skool.com/community/python)
+[![Skool Python Community](https://img.shields.io/badge/Skool-Python%20Community-green?style=flathttps://www.skool.com/coder
 # Muhammad Waqas Atta's Portfolio 🌐  
 *Professional Portfolio Built with Django | Collaboratively Developed with Skool.com Python Community*  
 
