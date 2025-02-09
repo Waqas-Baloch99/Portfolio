@@ -24,6 +24,7 @@ ALLOWED_HOSTS = [
     'portfolio-spdc.up.railway.app',
 ]
 
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
