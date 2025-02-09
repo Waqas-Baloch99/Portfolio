@@ -113,3 +113,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'waqaskhosa99@gmail.com'
 EMAIL_HOST_PASSWORD = 'mncc wotf vfri gnlt'
+CSRF_TRUSTED_ORIGINS = [
+    'https://portfolio-spdc.up.railway.app',
+]
+
