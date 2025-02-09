@@ -177,7 +177,6 @@ def user_logout(request):
     return redirect('login')
 
 # =============== Portfolio View ===============
-@login_required
 def portfolio(request, username):
     # Fetch the profile user based on the username parameter
     profile_user = get_object_or_404(CustomUser, username=username)
