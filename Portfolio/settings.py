@@ -20,7 +20,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Debug settings
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost, .railway.app').split(',')
+ALLOWED_HOSTS = [
+    'portfolio-spdc.up.railway.app',
+]
 
 # Application definition
 INSTALLED_APPS = [
